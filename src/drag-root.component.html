@@ -1,0 +1,6 @@
+<div *ngFor="let item of items">
+  Container {{ item.id }}
+  <drag-container [item]="item"></drag-container>
+</div>
+
+<button (click)="addContainer()">Add Container</button>
