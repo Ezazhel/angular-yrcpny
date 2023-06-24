@@ -1,5 +1,9 @@
 import {
+CdkDrag,
   CdkDragDrop,
+  CdkDragMove,
+  CdkDragRelease,
+  CdkDropList,
   DragDropModule,
   moveItemInArray,
   transferArrayItem,
@@ -23,7 +27,7 @@ export class DragContainerComponent {
 
   public items: DragItem[] = [];
 
-  constructor(private readonly dragService: DragService) {}
+  constructor(private readonly dragDropService: DragService) {}
 
   public addItem() {
     this.items.push(<DragItem>{
@@ -39,20 +43,19 @@ export class DragContainerComponent {
     });
   }
 
+  public allowDropPredicate = (drag: CdkDrag, drop: CdkDropList) => {
+    return this.dragDropService.isAllowedDrop(drag, drop);
+  };
   public dropped(event: CdkDragDrop<DragItem[], DragItem[]>) {
-    if (event.previousContainer === event.container) {
-      moveItemInArray(
-        event.previousContainer.data,
-        event.previousIndex,
-        event.currentIndex
-      );
-    } else {
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
-    }
+    this.dragDropService.dropped(event);
+
+  }
+
+  public dragMoved(event: CdkDragMove<DragItem>) {
+    this.dragDropService.dragMoved(event);
+  }
+
+  public dragReleased(event: CdkDragRelease) {
+    this.dragDropService.dragReleased(event);
   }
 }

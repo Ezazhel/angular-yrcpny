@@ -1,6 +1,6 @@
 import { CdkDropList } from '@angular/cdk/drag-drop';
 import { Directive, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription, tap } from 'rxjs';
 import { DragService } from './drag.service';
 
 @Directive({
@@ -17,13 +17,19 @@ export class CustomDragDrop implements OnInit, OnDestroy {
   ngOnInit() {
     this.dragService.register(this.dropList.id);
     this.subscription.add(
-      this.dragService.list$.subscribe((list) => {
-        this.dropList.connectedTo = list;
-        console.log('connectdTo', this.dropList.connectedTo);
-      })
+      this.dragService.list$
+        .pipe(
+          tap((list) => {
+            this.dropList.connectedTo = list;
+            console.log('connectdTo', this.dropList.connectedTo);
+          })
+        )
+        .subscribe()
     );
   }
   ngOnDestroy() {
+    this.dragService.unregister(this.dropList.id);
+
     this.subscription.unsubscribe();
   }
 }

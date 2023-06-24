@@ -1,23 +1,28 @@
 <div
   cdkDropList
   class="droplist"
-  [id]="item.id"
   [cdkDropListData]="items"
   custom-drag-drop
   (cdkDropListDropped)="dropped($event)"
+  [cdkDropListEnterPredicate]="allowDropPredicate"
 >
-  <ng-container *ngFor="let _item of items">
+  <div
+    *ngFor="let _item of items"
+    [cdkDragData]="_item"
+    (cdkDragMoved)="dragMoved($event)"
+    (cdkDragReleased)="dragReleased($event)"
+    cdkDrag
+  >
     <text-item
       [text]="_item.id"
       *ngIf="_item.type === 'Item'; else container"
-      cdkDrag
       class="drag-item"
     ></text-item>
     <ng-template #container>
       Container {{ _item.id }}
       <drag-container [item]="_item"></drag-container>
     </ng-template>
-  </ng-container>
+  </div>
 </div>
 <button (click)="addItem()">Add Item</button>
 <button (click)="addContainer()">Add Container</button>
